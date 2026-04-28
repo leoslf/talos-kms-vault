@@ -138,6 +138,10 @@ config:
     enabled: true
     addr: ":8081"
 
+  # Whether to create keys if key does not exist
+  upsertKeys:
+    enabled: false
+
 # Vault configuration
 vault:
   # Vault server address

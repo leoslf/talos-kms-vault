@@ -12,6 +12,8 @@ import (
 	"os/signal"
 	"time"
 
+	"net/http"
+
 	"github.com/siderolabs/kms-client/api/kms"
 	"github.com/soulkyu/talos-kms-vault/pkg/auth"
 	"github.com/soulkyu/talos-kms-vault/pkg/leaderelection"
@@ -20,7 +22,6 @@ import (
 	"golang.org/x/sync/errgroup"
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/credentials"
-	"net/http"
 )
 
 var kmsFlags struct {
@@ -45,6 +46,8 @@ var kmsFlags struct {
 	// Health server flags
 	healthServerEnabled bool
 	healthServerAddr    string
+
+	upsertKeysEnabled bool
 }
 
 func main() {
@@ -69,6 +72,9 @@ func main() {
 	// Health server flags
 	flag.BoolVar(&kmsFlags.healthServerEnabled, "health-server", true, "Enable health check server")
 	flag.StringVar(&kmsFlags.healthServerAddr, "health-server-addr", ":8081", "Health check server address")
+
+	// Upsert keys flags
+	flag.BoolVar(&kmsFlags.upsertKeysEnabled, "upsert-keys-enabled", false, "Whether to upsert keys if the key does not exist")
 	flag.Parse()
 
 	logger := slog.New(slog.NewJSONHandler(os.Stdout, nil))
@@ -119,7 +125,7 @@ func run(ctx context.Context, logger *slog.Logger) error {
 		return err
 	}
 
-	srv := server.NewServer(client, logger, kmsFlags.mountPath)
+	srv := server.NewServer(client, logger, kmsFlags.mountPath, kmsFlags.upsertKeysEnabled)
 
 	// Create validation middleware based on flags
 	validationConfig := createValidationConfig()

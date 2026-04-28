@@ -79,7 +79,10 @@ jobs:
     steps:
     - name: Checkout repository
       uses: actions/checkout@v4
-    
+
+    - name: Setup QEMU
+      uses: docker/setup-qemu-action@v3
+
     - name: Set up Docker Buildx
       uses: docker/setup-buildx-action@v3
     
@@ -165,7 +168,7 @@ jobs:
       run: |
         for chart in ./helm-packages/*.tgz; do
           if [ -f "$chart" ]; then
-            helm push "$chart" oci://${{ env.REGISTRY }}/soulkyu
+            helm push "$chart" oci://${{ env.REGISTRY }}/${{ github.repository_owner }}
           fi
         done
 

@@ -24,3 +24,6 @@ data:
   leader-election-lease-duration: {{ .Values.config.leaderElection.leaseDuration | quote }}
   leader-election-renew-deadline: {{ .Values.config.leaderElection.renewDeadline | quote }}
   leader-election-retry-period: {{ .Values.config.leaderElection.retryPeriod | quote }}
+
+  # Upsert Key configuration
+  upsert-keys-enabled: {{ .Values.config.upsertKeys.enabled | quote }}
